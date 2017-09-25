@@ -15,7 +15,7 @@ public class HexGrid : MonoBehaviour
 
     public HexCell cellPrefab;
     public Text cellLabelPrefab;
-    
+
 
     private void Awake()
     {
@@ -65,9 +65,38 @@ public class HexGrid : MonoBehaviour
         cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
         cell.color = defaultColor;
 
+        SetNeighbors(x, z, i, cell);
+
         var label = Instantiate<Text>(cellLabelPrefab);
         label.rectTransform.SetParent(gridCanvas.transform, false);
         label.rectTransform.anchoredPosition = new Vector2(pos.x, pos.z);
         label.text = cell.coordinates.ToStringOnSeparateLines();
+    }
+
+    private void SetNeighbors(int x, int z, int i, HexCell cell)
+    {
+        if (x > 0)
+        {
+            cell.SetNeighbor(HexDirection.W, cells[i - 1]);
+        }
+        if (z > 0)
+        {
+            if ((z & 1) == 0)
+            {
+                cell.SetNeighbor(HexDirection.SE, cells[i - width]);
+                if (x > 0)
+                {
+                    cell.SetNeighbor(HexDirection.SW, cells[i - width - 1]);
+                }
+            }
+            else
+            {
+                cell.SetNeighbor(HexDirection.SW, cells[i - width]);
+                if (x < width - 1)
+                {
+                    cell.SetNeighbor(HexDirection.SE, cells[i - width + 1]);
+                }
+            }
+        }
     }
 }
