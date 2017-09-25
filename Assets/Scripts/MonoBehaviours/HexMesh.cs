@@ -60,25 +60,6 @@ public class HexMesh : MonoBehaviour
         {
             CreateBridge(direction, cell, v1, v2);
         }
-
-        //var prevNeighbor = cell.GetNeighbor(direction.Previous()) ?? cell;
-        //var nextNeighbor = cell.GetNeighbor(direction.Next()) ?? cell;
-
-
-
-        //AddTriangle(v1, center + HexMetrics.GetFirstCorner(direction), v3);
-        //AddTriangleColor(
-        //    cell.color,
-        //    (cell.color + prevNeighbor.color + neighbor.color) / 3f,
-        //    bridgeColor
-        //);
-
-        //AddTriangle(v2, v4, center + HexMetrics.GetSecondCorner(direction));
-        //AddTriangleColor(
-        //    cell.color,
-        //    bridgeColor,
-        //    (cell.color + neighbor.color + nextNeighbor.color) / 3f
-        //);
     }
 
     private void CreateBridge(HexDirection direction, HexCell cell, Vector3 v1, Vector3 v2)
