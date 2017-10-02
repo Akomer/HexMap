@@ -11,10 +11,13 @@ public class HexMapEditor : MonoBehaviour
 
     private Color activeColor;
     private int activeElevation;
+    private bool applyColor;
+    private bool applyElevation;
+    private int brushSize;
 
     private void Awake()
     {
-        SelectColor(0);
+        SelectColor(-1);
     }
 
     private void Update()
@@ -27,12 +30,27 @@ public class HexMapEditor : MonoBehaviour
 
     public void SelectColor(int index)
     {
-        activeColor = colors[index];
+        applyColor = index >= 0;
+        if (applyColor)
+        {
+            activeColor = colors[index];
+        }
+        
+    }
+
+    public void SetApplyElevation(bool toggle)
+    {
+        applyElevation = toggle;
     }
 
     public void SetElevation(float elevation)
     {
         activeElevation = (int)elevation;
+    }
+
+    public void SetBrushSize(float size)
+    {
+        brushSize = (int)size;
     }
 
     private void HandleInput()
@@ -42,14 +60,46 @@ public class HexMapEditor : MonoBehaviour
         if (Physics.Raycast(inputRay, out hit))
         {
             var cell = hexGrid.GetCell(hit.point);
-            EditCell(cell);
+            EditCells(cell);
+        }
+    }
+
+    private void EditCells(HexCell center)
+    {
+        var centerX = center.coordinates.X;
+        var centerZ = center.coordinates.Z;
+        
+        for (int r = 0, z = centerZ - brushSize; z<= centerZ; z++, r++)
+        {
+            for (var x = centerX - r; x <= centerX + brushSize; x++)
+            {
+                EditCell(hexGrid.GetCell(new HexCoordinates(x, z)));
+            }
+        }
+
+        for (int r = 0, z = centerZ + brushSize; z > centerZ; z--, r++)
+        {
+            for (var x = centerX - brushSize; x <= centerX + r; x++)
+            {
+                EditCell(hexGrid.GetCell(new HexCoordinates(x, z)));
+            }
         }
     }
 
     private void EditCell(HexCell cell)
     {
-        cell.color = activeColor;
-        cell.Elevation = activeElevation;
-        hexGrid.Refresh();
+        if (cell == HexCell.nullCell)
+        {
+            return;
+        }
+
+        if (applyColor)
+        {
+            cell.Color = activeColor;
+        }
+        if (applyElevation)
+        {
+            cell.Elevation = activeElevation;
+        }
     }
 }
